@@ -1,0 +1,233 @@
+<pre>
+# vim:sw=8:ts=8:si:et
+
+This is the software for the tuxgraphics.org
+ethernet remote device with LCD display and remote switch (relay)
+See http://tuxgraphics.org/electronics/
+
+Copyright of most software and all diagrams: Guido Socher
+
+Copyright of enc28j60.c/enc28j60.h Pascal Stang (http://www.procyonengineering.com/)
+          and small modifications by Guido Socher
+
+License for everything: GPL V2
+See http://www.gnu.org/licenses/gpl.html
+
+The LCD connection (schematic) is documented in the sub-directory hardware
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+
+ All parts needed to build this AVR ethernet solution can be ordered from 
+ http://shop.tuxgraphics.org/                                          
+ Note that the magnetics need to fit exactly the requirements of the enc28j60
+ chip. You can not just take any transformer.
+
+!! READ THIS FIRST !!
+---------------------
+! Edit the file main.c and change the 3 lines:
+! static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x25};
+! static uint8_t myip[4] = {10,0,0,25};
+! static char baseurl[]="http://10.0.0.25/";
+
+Check the file "Makefile" and make sure the MCU is set correctly:
+MCU=atmega168
+DUDECPUTYPE=m168
+or
+MCU=atmega88
+DUDECPUTYPE=m88
+or
+MCU=atmega328p
+DUDECPUTYPE=m328
+
+For the first device you build you will not need to change the mymac line.
+But you will probably need to change the IP address (myip). It must be a
+free address from the address range in your home network.
+
+There is a range of private addresses (not routed on the public internet)
+which you can use:
+Netmask          Network Addresses
+255.0.0.0         10.0.0.0 - 10.255.255.255
+255.255.0.0       172.16.0.0 - 172.31.255.255
+255.255.255.0     192.168.0.0 - 192.168.255.255
+
+Example: you wlan router might have 192.168.1.1, your PC might have
+192.168.1.2. This means you could e.g use 192.168.1.10 and leave some
+room for more PCs. If you use DHCP then make sure that the address it not
+double allocated (exclude it from the DHCP range).
+
+To compile the final software use the command:
+make
+
+Note: windows users may use and modify the supplied win_cmp.bat to setup the
+environment correctly.
+
+The above command will compile the following hex files:
+eth_rem_dev_tcp.hex  test0.hex  test1.hex  test2.hex  test_readSiliconRev.hex
+
+The command
+make load
+
+will execute a unix script and download eth_rem_dev_tcp.hex to the atmega88. It works
+only for tuxgraphics programmers and linux. If you have a different programmer then
+you should just take the hex files and download them with whatever command it
+applicable to your programmer hardware.
+E.g something like: 
+   avrdude -p m88 -c avrusb500 -e -U flash:w:eth_rem_dev_tcp.hex
+
+
+Note: There is no need to change any fuse bytes on the atmega88 for 
+hardware which uses just the internal clock of the atmega88.
+
+If you are unsure what the current fuse setting are on the atmega88 
+then you can read the fuse settings with a command like: 
+          avrdude -p m88 -c avrusb500 -v -q
+      The result should be this:
+          avrdude: safemode: lfuse reads as 62
+          avrdude: safemode: hfuse reads as DF
+          avrdude: safemode: efuse reads as 1
+
+You need an avr-gcc development environment in order to compile this.
+You need at least avrlibc-1.4.x !! The atmega88 will not work with earilier 
+version.
+
+! Note your programmer might interfer with the enc28j60! For the avrusb500
+! with 30cm cable you can normally leave the cable on. For all other programmers
+! it is however better to remove the programmer cable and power down/up the device.
+! This is because the SPI interface is used for loading of the software and 
+! communication to the enc28j60.
+
+To see a list of all possible build targets run the command:
+make help
+
+Compiling on non-Unix systems
+-----------------------------
+Please use the provided Makefile !!!
+
+It will also work under Windows except for the loading
+of the software. That is compiling will work but not
+"make load". Use then whatever tools and commands to download
+the resuting .hex file into the micrcontroller
+
+Take also a look at the supplied win_cmp.bat file. This bat script
+might be needed to set the environment correctly.
+
+
+============Testing the hardware during assembly=============
+
+Loading the test software
+-------------------------
+Test of the atmega88:
+make test0.hex
+make load_test0
+
+This will case a LED on PB1 to blink with 1Hz
+
+---------------
+Edit the file test1.c and change the lines (see description above):
+static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x25};
+static uint8_t myip[4] = {10,0,0,25};
+
+make test1.hex
+make load_test1
+
+The program will perform a LED test for the LEDs on the magjack.
+The LEDs will go on and off after startup and then the green LED
+should stray on indicating that the link is up. When you ping the circuit
+it will answer. The yellow LED should blink when the a packet arrives.
+The red LED on PB1 should go on/off with every ping packet.
+
+---------------
+Edit the file test2.c and change the lines (see description above):
+static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x25};
+static uint8_t myip[4] = {10,0,0,25};
+
+make test2.hex
+make load_test2
+
+The green LED on the magjack should go on indicating that the link is up.
+When you ping the circuit it will answer. The yellow LED should blink when 
+the a packet arrives.
+You can use the program udpcom and send the string test to the device. It will
+answer with "hello". Exmaple:
+
+./udpcom/unix/udpcom test 10.0.0.25
+
+II: data: test, ip: 10.0.0.25 port: 1200
+OK: 10.0.0.25: hello
+
+Instead of using udpcom you can also point your web browser to the
+device: http://10.0.0.25
+You should see a web page that says "OK, it works".
+
+A simple web server example (not the eth_rem_dev_tcp.hex)
+---------------------------------------------------------
+The test_readSiliconRev.c (compiles to load_readSiliconRev.hex) reads 
+the enc28j60 silicon revision and displays it. 
+You can use it as a base for a simple application
+where you want to just read data (e.g thermometer)
+
+make 
+make load_readSiliconRev
+
+Read via udp:
+udpcom ver 10.0.0.25
+
+will answer:
+II: data: ver, ip: 10.0.0.25 port: 1200
+OK: 10.0.0.25: ver=4
+
+Read via webbrowser:
+http://10.0.0.25
+
+will display a webpage with:
+ENC28J60 silicon rev is: 4
+
+Using the eth_rem_dev_tcp with UDP
+----------------------------------
+The LCD interface software has no longer any UDP interface.
+It has only a web interface
+
+Using the eth_rem_dev_tcp with TCP/HTTP 
+---------------------------------------
+Point your web browser to
+http://10.0.0.25   (or what ever IP address you have given your hardware)
+
+You should get as answer a web page with:
+           password: [        ][ok]
+
+Enter the password (the string secret) and you should get a page like this:
+
+           Output is: OFF [refresh status]
+
+                       Switch on
+
+        -------------------------------------
+
+                [                    ]
+                [                    ]
+                    [write to LCD]
+        -------------------------------------
+        version 2.6, tuxgraphics.org
+
+
+
+
+
+Messages form a Network analyser
+--------------------------------
+traffic_XXX.txt and traffic_XXX.cap are
+decoded and binary messages of the communication with the
+eth_rem_dev_tcp (not this hardware with lcd). This capture will help 
+you to understand the code of the eth/ip/udp/tcp stack.
+
+Revision history
+----------------
+2007-02-11: version eth_lcd_tcp-2.6 -- first public version (based on eth_rem_dev_tcp-2.5).
+2007-12-09: version eth_lcd_tcp-2.7 -- change circuit diagram to remove misleading numbers
+                                    -- Add additional delays in lcd_write command to make
+                                       code work with 12 MHz
+
+2008-06-05: version eth_lcd_tcp-2.8 -- Add even more delay for slower LCD displays
+2009-02-11: version eth_lcd_tcp-2.9 -- Enc bug fixes and more delay for LCD
+2009-02-15: version eth_lcd_tcp-2.10 -- size optimisations in the code, compile for 328p
+</pre>
