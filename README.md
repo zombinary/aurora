@@ -37,9 +37,9 @@ tcp controller
 
 | __**mcu**__                | __**controller**__    |                           |
 |----------------------------|-----------------------|---------------------------|
-|  atmega328p		     |                       |                           |
-|                            | ws2812b (30pxl)       |  :white_check_mark:       |
-|                            |		             |                           |
+|  		                        |                       |                           |
+|  atmega328p                | ws2812b (30pxl)       |  :white_check_mark:       |
+|                            |		                     |                           |
 
 Road-map
 =========
