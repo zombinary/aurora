@@ -7,7 +7,7 @@ The tcp stack based on the tuxgraphic tcp stack (http://tuxgraphics.org/electron
 You can change the color of the pixel with an simple tcp message, like a hex string.
 Use an individual tcp-server or node-red.
 Also see my other project named 'sphere'. This is a nodejs based http-server to 
-control several aurora clients.
+control several aurora server.
 
 
 Hardware
