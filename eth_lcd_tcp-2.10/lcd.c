@@ -134,7 +134,7 @@ static unsigned char lcd_waitcmd(unsigned char cmdwait)
         _delay_us(10);
 	/* the display needs much longer to process a command */
 	if (cmdwait){
-		delay_ms(3);
+		_delay_ms(3);
 	}
 	return (0); 
 }
@@ -231,24 +231,24 @@ void lcd_init(u08 dispAttr)
 	sbi(LCD_E_DDR, LCD_E_PIN);	/* E  pin as output */
 
 
-	delay_ms(14);	/* wait 12ms or more after power-on       */
+	_delay_ms(14);	/* wait 12ms or more after power-on       */
 
 	/* initial write to lcd is 8bit */
 	lcd_out_high(LCD_FUNCTION_8BIT_1LINE);
 	lcd_e_toggle();
-	delay_ms(4);	/* delay, busy flag can't be checked here */
+	_delay_ms(4);	/* delay, busy flag can't be checked here */
 
 	lcd_out_high(LCD_FUNCTION_8BIT_1LINE);
 	lcd_e_toggle();
-	delay_ms(4);	/* delay, busy flag can't be checked here */
+	_delay_ms(4);	/* delay, busy flag can't be checked here */
 
 	lcd_out_high(LCD_FUNCTION_8BIT_1LINE);
 	lcd_e_toggle();
-	delay_ms(4);	/* delay, busy flag can't be checked here */
+	_delay_ms(4);	/* delay, busy flag can't be checked here */
 
 	lcd_out_high(LCD_FUNCTION_4BIT_1LINE);	/* set IO mode to 4bit */
 	lcd_e_toggle();
-	delay_ms(4);	/* delay, busy flag can't be checked here */
+	_delay_ms(4);	/* delay, busy flag can't be checked here */
 
 	/* from now the lcd only accepts 4 bit I/O, we can use lcd_command() */
 	lcd_command(LCD_FUNCTION_DEFAULT);	/* function set: display lines  */
