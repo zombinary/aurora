@@ -12,8 +12,6 @@ CC = avr-gcc
 
 LIB_PXL         = light_ws2812
 WRAPPER         = wrapper
-#DEPWRAP                = wrapper/wrapper.h
-#LIB_TCP        = eth_lcd_tcp-2.10
 AURORA          = aurora
 DEP                     = ws2812b/ws2812_config.h ws2812b/light_ws2812.h wrapper/wrapper.h
 TCP_OBJ         = eth_lcd_tcp-2.10/enc28j60.o eth_lcd_tcp-2.10/ip_arp_udp_tcp.o eth_lcd_tcp-2.10/lcd.o

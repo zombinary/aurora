@@ -1,4 +1,4 @@
-aurora v0.0.1
+aurora v0.0.2
 ============ 
 
 Control ws2812b pixel with an atmege328p.
@@ -28,12 +28,12 @@ wiring
 | __**atmega328p**__         | __**enc28J60**__      | __**lcd 2x16**__          | __**ws2812b**__      |
 |----------------------------|-----------------------|---------------------------|----------------------|
 |                            |                       |                           |                      |
-| PD2                        |                       | PIN4  - RS                |                      |
-| PD3                        |                       | PIN6  - E                 |                      |
-| PD4                        |                       | PIN11 - D4                |                      |
-| PD5                        |                       | PIN12 - D5                |                      |
-| PD6                        |                       | PIN13 - D6                |                      |
-| PD7                        |                       | PIN14 - D7                |                      |
+| PD2                        |                       | PIN4  - RS (v0.0.1 only)  |                      |
+| PD3                        |                       | PIN6  - E  (v0.0.1 only)  |                      |
+| PD4                        |                       | PIN11 - D4 (v0.0.1 only)  |                      |
+| PD5                        |                       | PIN12 - D5 (v0.0.1 only)  |                      |
+| PD6                        |                       | PIN13 - D6 (v0.0.1 only)	 |                      |
+| PD7                        |                       | PIN14 - D7 (v0.0.1 only)	 |                      |
 | PD8                        |                       |                           | DIN                  |
 |                            |                       |                           |                      |
 | PD10                       | SS                    |                           |                      |
@@ -56,9 +56,8 @@ Getting started
 send tcp response
 ---------------------
 
-    send hex string to enabel the pixel.
-    "ff00ff" ==> RGB
-    The value is written to the lcd.
+    send color value as hex  to enabel the pixel.
+    {0xff,0xff,0xff} ==> RGB (color white full light intensity)
 
 tcp controller
 ---------------------
@@ -69,16 +68,18 @@ tcp controller
 ## Supported controller
 
 
-| __**mcu**__                | __**controller**__    |                           |
-|----------------------------|-----------------------|---------------------------|
-|                    		     |                       |                           |
-| atmega328p                 | ws2812b (300pxl)      |  :white_check_mark:       |
-|                            |      		             |                           |
+| __**mcu**__                | __**controller**__    |__**versiont**__           |                           |
+|----------------------------|-----------------------|---------------------------|---------------------------|
+|                    	     |                       |                           |                           |
+| atmega328p                 | ws2812b (300pxl)      |  v0.0.1                   |  :white_check_mark:       |
+|                            |      		     |  v0.0.2                   |  :white_check_mark:       |
 
 Road-map
 =========
   
-  * add brightness
   * dhcp or non static ip-address
-  * expand tcp message to controll single pixel
+  * add API to use light effects (flash, smooth, chaserlight, ....)
+  * add switch mode to control second string on another port
+  * add digital input/output
+
 
