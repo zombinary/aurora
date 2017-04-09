@@ -28,12 +28,12 @@
 // please modify the following two lines. mac and ip have to be unique
 // in your local area network. You can not have the same numbers in
 // two devices:
-static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x25};
+static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x65};
 // how did I get the mac addr? Translate the first 3 numbers into ascii is: TUX
 static uint8_t myip[4] = {10,0,0,25};
 // base url (you can put a DNS name instead of an IP addr. if you have
 // a DNS server (baseurl must end in "/"):
-static char baseurl[]="http://10.0.0.25/";
+static char baseurl[]="http://10.11.0.101/";
 static uint16_t mywwwport =80; // listen port for tcp/www (max range 1-254)
 // or on a different port:
 //static char baseurl[]="http://10.0.0.24:88/";
