@@ -1,4 +1,4 @@
-aurora v0.0.2
+aurora v0.0.3
 ============ 
 
 Control ws2812b pixel with an atmege328p.
