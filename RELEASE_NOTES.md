@@ -1,7 +1,10 @@
 version 0.0.3
 ============
-  - add API
-   
+  - add clearPixel()/setClearPixel_req();
+  - add setPixel()/setPixel_req();
+  - add setColor()/setColor_req();
+	- add setError_req();
+	
 version 0.0.2
 ============
   - change color value format hexstring ==> hex

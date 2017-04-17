@@ -53,19 +53,90 @@ Getting started
 
  gcc version 4.8.2 (GCC) 
 
-send tcp response
+API description:
 ---------------------
 
-    send color value as hex  to enabel the pixel.
-    {0xff,0xff,0xff} ==> RGB (color white full light intensity)
+	
+# standard request:
+| __**byte**__  | __**description**__   |
+|---------------|-----------------------|
+| 0-1           | 4	(low byte first)	  |
+| 2             | CMD								    |
+| 3             | port								  |
 
-tcp controller
+
+# error request:
+
+| __**byte**__  | __**description**__   |
+|---------------|-----------------------|
+| 0-1           | 4	(low byte first)	  |
+| 2             | 0xff								  |
+| 3             | error code					  |
+
+
+# commands
+
+# clearPixel:
+
+clear the internal buffer of led matrix
+
+| __**byte**__  | __**description**__ 	    |
+|---------------|---------------------------|
+| 0-1           | 3	length (low byte first) |
+| 2             | CMD_CLEARPIXEL = 0x12	    |
+
+
+# setColor:
+
+set the color of all pixel. 
+Pixels hardcoded as define 'MAX_PIXEL'.
+
+| __**byte**__  | __**description**__ 	    |
+|---------------|---------------------------|
+| 0-1           | 7	length (low byte first) |
+| 2             | CMD_SETCOLOR = 0x15	      |
+| 3             | PIN									      |
+| 4             | color value red 		      |
+| 5             | color value green 	      |
+| 6             | color value blue		      |
+
+# setPixel:
+
+set the color of an specific pixel.
+ 
+| __**byte**__  | __**description**__   |
+|---------------|-----------------------|
+| 0-1           | 9	(low byte first)	  |
+| 2             | CMD_SETPIXEL = 0x13	  |
+| 3             | PIN									  |
+| 4-5           | pixel (low byte first)|
+| 6             | color value red 		  |
+| 7             | color value green 	  |
+| 8             | color value blue		  |
+
+# setRange:
+
+set the color of an specific range.
+ 
+| __**byte**__  | __**description**__   |
+|---------------|-----------------------|
+| 0-1           | 10	(low byte first)  |
+| 2             | CMD_SETRANGE = 0x14	  |
+| 3             | PIN									  |
+| 4-5           | first pixel (LBGF)    |
+| 6-7           | last pixel (LBGF)     |
+| 8             | color value red 		  |
+| 9             | color value green 	  |
+| 10            | color value blue		  |
+
+controller
 ---------------------
 
- * [sphere](https://github.com/zombinary/sphere)
+ * [sphere](https://github.com/zombinary/sphere), browser based gui
+ * [gravity-aurora](https://github.com/zombinary/gravity-aurora), npm package
  
 
-## Supported controller
+# Supported Hardware
 
 
 | __**mcu**__                | __**controller**__    |__**versiont**__           |                           |
@@ -77,9 +148,6 @@ tcp controller
 Road-map
 =========
   
-  * dhcp or non static ip-address
-  * add API to use light effects (flash, smooth, chaserlight, ....)
-  * add switch mode to control second string on another port
-  * add digital input/output
+  * * add digital input/output
 
 

@@ -24,9 +24,9 @@
 
 #include "ws2812b/light_ws2812.h"
 //#include "wrapper/wrapper.h"
-#include "lib/command.h"
+#include "lib/pixel.h"
 
-#define MAX_PIXEL 60
+#define MAX_PIXEL 15
 
 //tcp settings
 static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x65};
@@ -48,11 +48,13 @@ int main(void){
   uint16_t pxl=0;
   uint16_t i = 0;
   uint16_t l = 0;
+  uint8_t cmd = 0;
 
   uint16_t x = 0;
   uint8_t pos = 0;
 
 
+  initPixel(MAX_PIXEL);
   // init strip - create an array with length of ledstrip (pixel)
   for(x=MAX_PIXEL; x>0; x--)
   {
@@ -140,102 +142,35 @@ int main(void){
                                  make_tcp_ack_with_data(buf,plen); // send data
 
                              }else{
-                            	 if(buf[dat_p + 2] == 0x13){
+                            	 cmd = buf[dat_p+2];
+                            	 switch(cmd){
+                            	 	 case 0x12:
+                            	 		  //CMD_CLEAR
+                            	 		  clearPixel((uint8_t *)&led);
+                            	          plen=setClearPixel_req(buf);
+                            	          break;
+                            	 	 case 0x13:
+                            	 		 //CMD_SETPIXEL
+                            		 	 setPixel((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
+                            		 	 plen=setPixel_req(buf);
+                            	 		 break;
+                            	 	case 0x14:
+                            	 		//CMD_SETRANGE
+                            	 		setRange((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
+                            	 		plen=setRange_req(buf);
+                            	 		break;
+	                        	 	 case 0x15:
+	                        	 		 //CMD_SETCOLOR
+                            	 		 setColor((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
+                            	 		plen=setColor_req(buf);
+                            	 		break;
+                            	 	 default:
+                            	 		 plen=setError_req(buf, 0x01);
+                            	 		 break;
 
-                                    	 // CMD_SETPIXEL
-                                    	 pixelpos = buf[dat_p + 4];
-                                    	 port = buf[dat_p + 5];
-                                    	 pos = 0;
-
-                                    	 led[pixelpos].r = buf[dat_p+6];
-                                    	 led[pixelpos].g = buf[dat_p+7];
-                                    	 led[pixelpos].b = buf[dat_p+8];
-
-                                    	 cli();
-                                    	 //	 _delay_ms(10);
-                                    	 	 ws2812_sendarray((uint8_t *)&led,MAX_PIXEL*3);
-                                    	 sei();
-                                    	 //char str[] = {0x75,0x6e,0x69,0x63,0x6f,0x72,0x6e,0x00}; //unicorn
-                                    	 char str[] = {0x04,0x00,0x13,0x03};
-
-                                    	 uint8_t pos = 0;
-                                    	 uint8_t i = 0;
-
-                                    	 request = (char *) malloc ( 4 +1);
-                                    	 //read_aurora_command(request);
-                                    	 //strcpy(request, str);
-                                    	 for(i=0; i<4;i++){
-                                    		 request[i] = str[i];
-                                    	 }
-
-                                    	 //plen=fill_tcp_data_p(buf,0,PSTR("unicron"));
-                                    	 while (pos < 4) {
-                                    		 buf[TCP_CHECKSUM_L_P+3+pos]=request[pos];
-                                    		 pos++;
-                                    	 }
-                                    	 plen = pos;
-
-                                     //}else{
-                                    	//ERROR wrong pixelpos
-                                     //}
-                            	 }else if(buf[dat_p + 2] == 0x15){
-                            		 //CMD_SETCOLOR
-                             		 char str[] = {0x04,0x00,0x15,0x03,0x00};
-
-
-                             		 port = buf[dat_p + 3];
-                             		pos = 0;
-
-                             	    	//for (l=0; l<(MAX_PIXEL-1); l++){
-                             		for (l=MAX_PIXEL; l>0;l--){
-                             			led[l-1].r = buf[dat_p+4];
-                             			led[l-1].g = buf[dat_p+5];
-                             			led[l-1].b = buf[dat_p+6];
-                             		}
-                             		cli();
-                             		//	 _delay_ms(10);
-                             			ws2812_sendarray((uint8_t *)&led,MAX_PIXEL*3);
-                                    	 //ws2812_sendarray((uint8_t *)&led,3);
-                                     sei();
-
-
-                             		 request = (char *) malloc ( 4 + 1);
-                             		 //read_aurora_command(request);
-                             		 //strcpy(request, str);
-                             		 for(i=0; i<4;i++){
-                             			 request[i] = str[i];
-                             		 }
-
-                             		 //plen=fill_tcp_data_p(buf,0,PSTR("unicron"));
-                             		 while (pos < 4) {
-                             			 buf[TCP_CHECKSUM_L_P+3+pos]=request[pos];
-                             			 pos++;
-                             		 }
-                             		 plen = pos;
-
-                            	 }else{
-                            		 // wrong command return error code 01 (LBF)
-                            		 char str[] = {0x05,0x00,0xff,0x01,0x00};
-                            		 uint8_t pos = 0;
-
-                            		 request = (char *) malloc ( 5 );
-                            		 //read_aurora_command(request);
-                            		 //strcpy(request, str);
-                            		 for(i=0; i<5;i++){
-                            			 request[i] = str[i];
-                            		 }
-
-                            		 //plen=fill_tcp_data_p(buf,0,PSTR("unicron"));
-                            		 while (pos < 5) {
-                            			 //buf[TCP_CHECKSUM_L_P+3+pos]=request[pos];
-                            			 buf[TCP_CHECKSUM_L_P+3+pos]=buf[dat_p + 2];
-                            			 pos++;
-                            		 }
-                            		 plen = pos;
                             	 }
-                            		 make_tcp_ack_from_any(buf);
-                            		 make_tcp_ack_with_data(buf,plen); // send data
-                            		 free(request);
+                           		 make_tcp_ack_from_any(buf);
+                            	 make_tcp_ack_with_data(buf,plen); // send data
                             	 continue;
                             }
                              make_tcp_ack_with_data(buf,plen); // send data
