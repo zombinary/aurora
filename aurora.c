@@ -26,12 +26,12 @@
 //#include "wrapper/wrapper.h"
 #include "lib/pixel.h"
 
-#define MAX_PIXEL 15
+#define MAX_PIXEL 188
 
 //tcp settings
-static uint8_t mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x65};
-static uint8_t myip[4] = {10,11,0,101};
-static uint16_t mywwwport =80; // listen port for tcp/www (max range 1-254)
+static uint8_t mac[6] = {0x70,0x65,0x6e,0x69,0x73,0x68};
+static uint8_t ip[4] = {10,11,0,104};
+static uint16_t port = 80; // listen port for tcp/www (max range 1-254)
 
 #define BUFFER_SIZE 750
 static uint8_t buf[BUFFER_SIZE+1];
@@ -42,16 +42,8 @@ struct cRGB led[MAX_PIXEL];   //led[0].r=16;led[0].g=16;led[0].b=16;  white
 int main(void){
   uint16_t plen;
   uint8_t dat_p;
-   char *request;
-   uint8_t port = 0;
-   uint16_t pixelpos = 0;
-  uint16_t pxl=0;
-  uint16_t i = 0;
-  uint16_t l = 0;
   uint8_t cmd = 0;
-
   uint16_t x = 0;
-  uint8_t pos = 0;
 
 
   initPixel(MAX_PIXEL);
@@ -62,7 +54,7 @@ int main(void){
   }
 
    	/*initialize enc28j60*/
-    enc28j60Init(mymac);
+    enc28j60Init(mac);
     enc28j60clkout(2); // change clkout from 6.25MHz to 12.5MHz
     _delay_loop_1(50); // 12ms
     enc28j60PhyWrite(PHLCON,0x476);
@@ -72,7 +64,7 @@ int main(void){
     //lcd_init(LCD_DISP_ON);
     //lcd_clrscr();
     //lcd_puts_P("aurora");
-    init_ip_arp_udp_tcp(mymac,myip,mywwwport);
+    init_ip_arp_udp_tcp(mac,ip,port);
 
   while(1){
         // get the next new packet:
@@ -104,7 +96,7 @@ int main(void){
          }
 
          // tcp port start, compare only the lower byte
-         if (buf[IP_PROTO_P]==IP_PROTO_TCP_V&&buf[TCP_DST_PORT_H_P]==0&&buf[TCP_DST_PORT_L_P]==mywwwport){
+         if (buf[IP_PROTO_P]==IP_PROTO_TCP_V&&buf[TCP_DST_PORT_H_P]==0&&buf[TCP_DST_PORT_L_P]==port){
                  if (buf[TCP_FLAGS_P] & TCP_FLAGS_SYN_V){
                          make_tcp_synack_from_syn(buf);
                          // make_tcp_synack_from_syn does already send the syn,ack
@@ -169,11 +161,12 @@ int main(void){
                             	 		 break;
 
                             	 }
-                           		 make_tcp_ack_from_any(buf);
-                            	 make_tcp_ack_with_data(buf,plen); // send data
-                            	 continue;
+                           		 //make_tcp_ack_from_any(buf);
+                            	 //make_tcp_ack_with_data(buf,plen); // send data
+                            	 //continue;
                             }
-                             make_tcp_ack_with_data(buf,plen); // send data
+                             //make_tcp_ack_with_data(buf,plen); // send data
+                             make_tcp_ack_from_any(buf);
                              continue;
                           }
                         }
