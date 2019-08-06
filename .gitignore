@@ -1,0 +1,8 @@
+dist/*
+objects/*
+lib/*.o
+eth_lcd_tcp-2.10/*.o
+eth_lcd_tcp-2.10/*.hex
+eth_lcd_tcp-2.10/*.map
+eth_lcd_tcp-2.10/*.out
+wrapper/*.o
