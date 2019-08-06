@@ -1,0 +1,5 @@
+#ifndef DEVICE_H
+#define DEVICE_H
+  void setDeviceInfo(uint8_t *led, uint8_t *data);
+  void setDeviceStatus(uint8_t *led, uint8_t *data);
+#endif
