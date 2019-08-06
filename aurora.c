@@ -136,37 +136,42 @@ int main(void){
                              }else{
                             	 cmd = buf[dat_p+2];
                             	 switch(cmd){
-                            	 	 case 0x12:
-                            	 		  //CMD_CLEAR
-                            	 		  clearPixel((uint8_t *)&led);
-                            	          plen=setClearPixel_req(buf);
-                            	          break;
-                            	 	 case 0x13:
+					                   case 0x10:
+                            	 	   //CMD_INFO
+	                            	 	 plen=setDeviceInfo_res(buf);
+	                            	    break;
+				 	                   case 0x11:
+	                            	 	 //CMD_SATUS
+	                            	 	 plen=setDeviceStatus_res(buf);
+        	                    	   break;
+                             case 0x12:
+                              		 //CMD_CLEAR
+                            	 		 clearPixel((uint8_t *)&led);
+	                            	   plen=setClearPixel_res(buf);
+        	                    	   break;
+                           	 case 0x13:
                             	 		 //CMD_SETPIXEL
                             		 	 setPixel((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
-                            		 	 plen=setPixel_req(buf);
+                            		 	 plen=setPixel_res(buf);
                             	 		 break;
-                            	 	case 0x14:
+                         	 	 case 0x14:
                             	 		//CMD_SETRANGE
                             	 		setRange((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
-                            	 		plen=setRange_req(buf);
+                            	 		plen=setRange_res(buf);
                             	 		break;
-	                        	 	 case 0x15:
-	                        	 		 //CMD_SETCOLOR
-                            	 		 setColor((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
-                            	 		plen=setColor_req(buf);
+	                       	 	 case 0x15:
+                        	 		   //CMD_SETCOLOR
+                            	 		setColor((uint8_t *)&led, (uint8_t *)&buf[dat_p]);
+                            	 		plen=setColor_res(buf);
                             	 		break;
-                            	 	 default:
-                            	 		 plen=setError_req(buf, 0x01);
+                            default:
+                            	 		 plen=setError_res(buf, 0x01);
                             	 		 break;
 
                             	 }
-                           		 //make_tcp_ack_from_any(buf);
-                            	 //make_tcp_ack_with_data(buf,plen); // send data
-                            	 //continue;
-                            }
-                             //make_tcp_ack_with_data(buf,plen); // send data
-                             make_tcp_ack_from_any(buf);
+                           }
+                             make_tcp_ack_from_any(buf); // haelt den socket offe
+                             //make_tcp_ack_with_data(buf,plen); // send data und schliesst den socket
                              continue;
                           }
                         }
