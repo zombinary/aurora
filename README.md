@@ -1,4 +1,4 @@
-aurora v0.0.4
+aurora
 ============ 
 
 Control ws2812b pixel with an atmege328p.
@@ -57,21 +57,21 @@ API description:
 ---------------------
 
 	
-# standard request:
-| __**byte**__  | __**description**__   |
-|---------------|-----------------------|
-| 0-1           | 4	(low byte first)	  |
-| 2             | CMD								    |
-| 3             | port								  |
+# standard response:
+| __**byte**__  | __**description**__           |
+|---------------|-------------------------------|
+| 0-1           | length 4	(low byte first)	  |
+| 2             | CMD								            |
+| 3             | port								          |
 
 
-# error request:
+# error response:
 
-| __**byte**__  | __**description**__   |
-|---------------|-----------------------|
-| 0-1           | 4	(low byte first)	  |
-| 2             | 0xff								  |
-| 3             | error code					  |
+| __**byte**__  | __**description**__           |
+|---------------|-------------------------------|
+| 0-1           | length 4	(low byte first)	  |
+| 2             | 0xff								          |
+| 3             | error code					          |
 
 
 # commands
@@ -82,7 +82,7 @@ clear the internal buffer of led matrix
 
 | __**byte**__  | __**description**__ 	    |
 |---------------|---------------------------|
-| 0-1           | 3	length (low byte first) |
+| 0-1           | length 3 (low byte first) |
 | 2             | CMD_CLEARPIXEL = 0x12	    |
 
 
@@ -93,7 +93,7 @@ Pixels hardcoded as define 'MAX_PIXEL'.
 
 | __**byte**__  | __**description**__ 	    |
 |---------------|---------------------------|
-| 0-1           | 7	length (low byte first) |
+| 0-1           | length 7 (low byte first) |
 | 2             | CMD_SETCOLOR = 0x15	      |
 | 3             | PIN									      |
 | 4             | color value red 		      |
@@ -104,30 +104,30 @@ Pixels hardcoded as define 'MAX_PIXEL'.
 
 set the color of an specific pixel.
  
-| __**byte**__  | __**description**__   |
-|---------------|-----------------------|
-| 0-1           | 9	(low byte first)	  |
-| 2             | CMD_SETPIXEL = 0x13	  |
-| 3             | PIN									  |
-| 4-5           | pixel (low byte first)|
-| 6             | color value red 		  |
-| 7             | color value green 	  |
-| 8             | color value blue		  |
+| __**byte**__  | __**description**__        |
+|---------------|----------------------------|
+| 0-1           | length 9  (low byte first) |
+| 2             | CMD_SETPIXEL = 0x13	       |
+| 3             | PIN									       | 
+| 4-5           | pixel (low byte first)     |
+| 6             | color value red 		       |
+| 7             | color value green 	       |
+| 8             | color value blue		       |
 
 # setRange:
 
 set the color of an specific range.
  
-| __**byte**__  | __**description**__   |
-|---------------|-----------------------|
-| 0-1           | 10	(low byte first)  |
-| 2             | CMD_SETRANGE = 0x14	  |
-| 3             | PIN									  |
-| 4-5           | first pixel (LBGF)    |
-| 6-7           | last pixel (LBGF)     |
-| 8             | color value red 		  |
-| 9             | color value green 	  |
-| 10            | color value blue		  |
+| __**byte**__  | __**description**__        |
+|---------------|----------------------------|
+| 0-1           | 10	(low byte first)       |
+| 2             | CMD_SETRANGE = 0x14	       |
+| 3             | PIN									       |
+| 4-5           | first pixel (LBGF)         |
+| 6-7           | last pixel (LBGF)          |
+| 8             | color value red 		       |
+| 9             | color value green 	       |
+| 10            | color value blue		       |
 
 controller
 ---------------------
